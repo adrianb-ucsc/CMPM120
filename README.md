@@ -1,1 +1,1 @@
-### Repository for CMPM120 Assignments
+### CMPM120 Assignments
