@@ -10,6 +10,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
       this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
       this.moveL=false;
       this.moveR=false;
+      this.home=game.config.height - borderUISize - borderPadding;
     }
     moveLeft(){
         this.moveL=true;
@@ -22,6 +23,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
             this.isFiring=true;
             this.sfxRocket.play();
             } 
+    }
+    grow(){
+        this.home += borderPadding;
     }
     update(){
         //left/right movement
@@ -49,6 +53,6 @@ class Rocket extends Phaser.GameObjects.Sprite {
     //reset rocket placement
     reset(){
         this.isFiring = false;
-        this.y = game.config.height - borderUISize - borderPadding;
+        this.y = this.home;
     }
 }
