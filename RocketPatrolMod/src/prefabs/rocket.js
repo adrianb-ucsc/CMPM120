@@ -10,7 +10,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
       this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
       this.moveL=false;
       this.moveR=false;
-      this.home=game.config.height - borderUISize - borderPadding;
+      this.home=game.config.height - borderUISize - 2*borderPadding;
     }
     moveLeft(){
         this.moveL=true;
