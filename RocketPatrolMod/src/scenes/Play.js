@@ -3,9 +3,9 @@ class Play extends Phaser.Scene{
         super("playScene");
     }
     preload(){
-        this.load.image('rocket', './assets/flower.png');
-        this.load.spritesheet('spaceship', './assets/ship.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame:1});
-        this.load.spritesheet('spaceship2', './assets/ship2.png', {frameWidth: 32, frameHeight: 16, startFrame: 0, endFrame:1});
+        this.load.image('flower', './assets/flower.png');
+        this.load.spritesheet('bug', './assets/ship.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame:1});
+        this.load.spritesheet('bug2', './assets/ship2.png', {frameWidth: 32, frameHeight: 16, startFrame: 0, endFrame:1});
         this.load.image('sky', './assets/backgroundsky.png');
         this.load.image('summer3', './assets/summer3.png');
         this.load.image('summer2', './assets/summer2.png');
@@ -27,15 +27,15 @@ class Play extends Phaser.Scene{
         this.sky.setInteractive({});
         
         //add rocket(p1)
-        this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0);
+        this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'flower').setOrigin(0.5, 0);
         
         //add spaceships
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'spaceship', 0, 30, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'spaceship', 0, 20, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'spaceship', 0, 10, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'spaceship2', 0, 60, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'spaceship2', 0, 50, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'spaceship2', 0, 40, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 30, game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 20, game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'bug', 0, 10, game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'bug2', 0, 60, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'bug2', 0, 50, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'bug2', 0, 40, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
         //foreground
         this.season1 = this.add.tileSprite(0, 0, 640, 480, 'summer1').setOrigin(0,0);
         //white borders
