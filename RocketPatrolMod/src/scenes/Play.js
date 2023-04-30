@@ -181,7 +181,7 @@ class Play extends Phaser.Scene{
             case 2:
                 this.sound.play('sfx_explosion3');
                 break;
-            case 4:
+            case 3:
                 this.sound.play('sfx_explosion4');
                 break;
         }   

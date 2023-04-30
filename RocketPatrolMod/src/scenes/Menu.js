@@ -4,12 +4,12 @@ class Menu extends Phaser.Scene{
     }
     preload(){
         //load audio
-        this.load.audio('sfx_select', './assets/blip_select12.wav');
+        this.load.audio('sfx_select', './assets/sound (6).wav');
         this.load.audio('sfx_explosion1', './assets/sound.wav');
         this.load.audio('sfx_explosion2', './assets/sound (1).wav');
         this.load.audio('sfx_explosion3', './assets/sound (2).wav');
         this.load.audio('sfx_explosion4', './assets/sound (3).wav');
-        this.load.audio('sfx_rocket', './assets/sound (4).wav');
+        this.load.audio('sfx_rocket', './assets/sound (5).wav');
         this.load.image('summerf', './assets/background-summer.png');
 
     }
