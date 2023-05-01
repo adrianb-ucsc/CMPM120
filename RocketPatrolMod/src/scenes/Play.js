@@ -4,9 +4,10 @@ class Play extends Phaser.Scene{
     }
     preload(){
         this.load.image('flower', './assets/flower.png');
-        this.load.spritesheet('bug', './assets/ship.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame:1});
-        this.load.spritesheet('bug2', './assets/ship2.png', {frameWidth: 32, frameHeight: 16, startFrame: 0, endFrame:1});
+        //this.load.spritesheet('bug', './assets/ship.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame:1});
+        this.load.atlas('bug2', './assets/ship2Atlas.png', 'assets/ship2.json');
         this.load.image('sky', './assets/backgroundsky.png');
+        this.load.image('summerf', './assets/background-summer.png');
         this.load.image('summer3', './assets/summer3.png');
         this.load.image('summer2', './assets/summer2.png');
         this.load.image('summer1', './assets/summer1.png');
@@ -15,6 +16,8 @@ class Play extends Phaser.Scene{
         this.load.image('plant3', './assets/Plant3.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 8});
+        //load atlas
+        this.load.atlas('bug', 'assets/shipAtlas.png', 'assets/ship.json');
     }
     create() {
         //place tile sprite
@@ -30,12 +33,12 @@ class Play extends Phaser.Scene{
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - 2*borderPadding, 'flower').setOrigin(0.5, 0);
         
         //add spaceships
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 1, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 1, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'bug', 0, 1, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
+        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed,"ship2-").setOrigin(0,0);
+        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0);
+        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0);
         //foreground
         this.season1 = this.add.tileSprite(0, 0, 640, 480, 'summer1').setOrigin(0,0);
         //white borders
@@ -59,17 +62,18 @@ class Play extends Phaser.Scene{
         this.p1Score = 0;
           // display score
         let scoreConfig = {
-            fontFamily: 'Papyrus',
+            fontFamily: 'courier',
             fontSize: '28px',
             color: '#843605',
             align: 'right',
             padding: {
                 top: 5,
+                left: borderUISize,
                 bottom: 5,
             },
-            fixedWidth: 100
+            fixedWidth: 0
         }
-        this.scoreLeft = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "❁" + this.p1Score, scoreConfig);
+        this.scoreLeft = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Click to fire", scoreConfig);
         this.timeRight = this.add.text(borderUISize, borderUISize+borderPadding*2, "⧖" + 0.001*game.settings.gameTimer, scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
@@ -80,6 +84,12 @@ class Play extends Phaser.Scene{
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
+            this.ship01.freeze();
+            this.ship02.freeze();
+            this.ship03.freeze();
+            this.ship04.freeze();
+            this.ship05.freeze();
+            this.ship06.freeze();
         }, null, this);
     }
     update(){

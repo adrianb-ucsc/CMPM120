@@ -1,6 +1,6 @@
 // Spaceship prefab
 class Spaceship extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame, pointValue, speed) {
+    constructor(scene, x, y, texture, frame, pointValue, speed, fprefix) {
       super(scene, x, y, texture, frame);
   
       // add object to existing scene
@@ -9,13 +9,15 @@ class Spaceship extends Phaser.GameObjects.Sprite {
       this.moveSpeed = speed;
       this.anims.create({
         key: 'flap',
-        frames: this.anims.generateFrameNumbers(texture, {start: 0, end: 1, first: 0}),
         frameRate: 5,
-        repeat: -1
-    });
+        repeat: -1,
+        frames: this.anims.generateFrameNames(texture,{prefix: fprefix, suffix: '.png', start:1, end: 2})
+      });
     this.anims.play('flap');
     }
-
+    freeze(){
+        this.anims.stop('flap');
+    }
     update(){
         //move spaceship left
         this.x-=this.moveSpeed;
