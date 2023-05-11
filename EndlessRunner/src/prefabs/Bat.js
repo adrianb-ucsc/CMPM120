@@ -8,6 +8,7 @@ class Bat extends Phaser.GameObjects.Sprite {
       this.moveSpeed = speed;
       this.end = false;
       this.up = false;
+      this.start = true;
       this.anims.create({
         key: 'fly',
         frameRate: 5,
@@ -16,6 +17,9 @@ class Bat extends Phaser.GameObjects.Sprite {
       });
     }
     goUP(){
+        if(this.start){
+            this.start = false;
+        }
         this.up = true;
     }
     goDOWN(){
@@ -23,8 +27,8 @@ class Bat extends Phaser.GameObjects.Sprite {
     }
     update(){
         //move spaceship left
-        if(!this.end){
-            if(this.up = true){
+        if(!this.end && !this.start){
+            if(this.up == true){
                 this.anims.play('fly');
                 if(this.y > this.height){
                   this.y-=this.moveSpeed;
