@@ -7,7 +7,7 @@ class Play extends Phaser.Scene{
         //this.load.spritesheet('bug', './assets/ship.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame:1});
         this.load.atlas('bug2', './assets/ship2Atlas.png', 'assets/ship2.json');
         this.load.image('sky', './assets/backgroundsky.png');
-        this.load.spritesheet('bat', 'assets/bat.png', {frameWidth: 128, frameHeight: 96, startFrame: 0, endFrame: 1});
+        this.load.spritesheet('bat', './assets/bat.png', {frameWidth: 128, frameHeight: 96, startFrame: 0, endFrame: 1});
         this.load.image('summerf', './assets/background-summer.png');
         this.load.image('summer3', './assets/summer3.png');
         this.load.image('summer2', './assets/summer2.png');
