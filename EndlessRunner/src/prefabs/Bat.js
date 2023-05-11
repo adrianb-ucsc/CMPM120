@@ -5,7 +5,6 @@ class Bat extends Phaser.GameObjects.Sprite {
   
       // add object to existing scene
       scene.add.existing(this);
-      this.points = pointValue;
       this.moveSpeed = speed;
       this.end = false;
       this.up = false;
