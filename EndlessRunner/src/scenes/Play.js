@@ -32,7 +32,7 @@ class Play extends Phaser.Scene{
         
         //add rocket(p1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - 2*borderPadding, 'flower').setOrigin(0.5, 0);
-        this.p1Bat = new Bat(this, game.config.width/2 - borderUISize, game.config.height/2, 'bat', 1, game.settings.spaceshipSpeed/3).setOrigin(0.5, 0);
+        this.p1Bat = new Bat(this, game.config.width/2 - 2*borderUISize, game.config.height/2, 'bat', 1, game.settings.spaceshipSpeed/3).setOrigin(0.5, 0);
         //add spaceships
         this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
@@ -118,8 +118,13 @@ class Play extends Phaser.Scene{
             
             this.input.on('gameobjectdown', (pointer, gameObject, event) => {
                 this.p1Rocket.fire();
+                this.p1Bat.goUP();
+            });
+            this.input.on('gameobjectup', (pointer, gameObhect, event) => {
+                this.p1Bat.goDOWN();
             });
             this.p1Rocket.update();
+            this.p1Bat.update();
             if(this.p1Rocket.x!=this.plant.x){
                 this.plant.x=this.p1Rocket.x;
             }
