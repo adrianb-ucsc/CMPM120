@@ -6,6 +6,8 @@ class Spaceship extends Phaser.GameObjects.Sprite {
       // add object to existing scene
       scene.add.existing(this);
       this.moveSpeed = speed;
+      this.home = this.y;
+      this.isfreeze = false;
       this.anims.create({
         key: 'flap',
         frameRate: 10,
@@ -16,16 +18,23 @@ class Spaceship extends Phaser.GameObjects.Sprite {
     }
     freeze(){
         this.anims.stop('flap');
+        this.isfreeze = true;
     }
     update(){
         //move spaceship left
-        this.x-=this.moveSpeed;
-        if(this.x<=0-this.width){
+        if(!this.isfreeze){
+        if(this.x>0-this.width){
+           this.x-=this.moveSpeed; 
+        }
+        if(this.x<=0-this.width&&Math.floor(Math.random()*4)==3){
             this.reset();
         }
+        }
+        
     }
 
     reset(){
         this.x = game.config.width;
+        this.y =this.home;
     }
 }

@@ -34,7 +34,8 @@ class Play extends Phaser.Scene{
         this.sky = this.add.tileSprite(0, 0, 640, 480, 'sky').setOrigin(0, 0);
         this.season3 = this.add.tileSprite(0, 0, 640, 480, 'summer3').setOrigin(0,0);
         this.season2 = this.add.tileSprite(0, 0, 640, 480, 'summer2').setOrigin(0,0);
-        
+        this.goFasterChance=0;
+        this.speedmod = 1;
         //green UI background
         this.sky.setInteractive({});
         //add rocket(p1)
@@ -66,15 +67,15 @@ class Play extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 7, first: 0}),
             frameRate: 12
         });
-        this.energyMax = 10000;
+        this.energyMax = 5000;
         this.energy = this.energyMax;
-        this.energyBar = ['░░░░░░░░░░','▓░░░░░░░░░','▓▓░░░░░░░░', '▓▓▓░░░░░░░', '▓▓▓▓░░░░░░', '▓▓▓▓▓░░░░░', '▓▓▓▓▓▓░░░░', '▓▓▓▓▓▓▓░░░', '▓▓▓▓▓▓▓▓░░', '▓▓▓▓▓▓▓▓▓░', '▓▓▓▓▓▓▓▓▓▓'];
+        this.energyBar = ['░░░░░','▓░░░░','▓▓░░░', '▓▓▓░░', '▓▓▓▓░', '▓▓▓▓▓'];
         //initialize score
         this.p1Score = 0;
           // display score
         let scoreConfig = {
             fontFamily: 'courier',
-            fontSize: '28px',
+            fontSize: '18px',
             color: '#F0CF8E',
             align: 'right',
             padding: {
@@ -84,15 +85,16 @@ class Play extends Phaser.Scene{
             },
             fixedWidth: 0
         }
-        this.scoreLeft = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Hold mouse click to fly", scoreConfig);
-        this.timeRight = this.add.text(borderUISize, borderUISize+borderPadding*2, "⧖" + 0.001*game.settings.gameTimer, scoreConfig);
+        this.timeR = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Hold mouse click to fly", scoreConfig);
+        this.scoreL = this.add.text(borderUISize, borderUISize+borderPadding*2, "⧖" + 0.001*game.settings.gameTimer, scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.timeRight.text = "⧖0";
-            this.gameEnd();
+            this.ship06.reset();
+            this.ship06.freeze();
+            this.goFasterChance=1;
         }, null, this);
     }
     update(){
@@ -124,6 +126,14 @@ class Play extends Phaser.Scene{
         this.season1.tilePositionY -= 0.3;
         
         if(!this.gameOver){
+            if(this.goFasterChance>1){
+                if(Math.random()*this.time.now>=game.settings.gameTimer&&this.time.now-this.goFasterChance>5000){
+                    this.goFasterChance=this.time.now;
+                    this.p1Bat.goFaster();
+                    this.speedmod*=2;
+                    this.scoreL.text = "Speed Modifier: x" + this.speedmod;
+                }
+            }
             if(this.energy > this.energyMax - this.p1Bat.flyTime){
                 if(this.energyMax-this.p1Bat.flyTime > 0){
                     this.energy = this.energyMax - this.p1Bat.flyTime;
@@ -135,13 +145,12 @@ class Play extends Phaser.Scene{
             if(this.energy == 0){
                 this.p1Bat.goDOWN();
             }
-            this.scoreLeft.text = "Energy: "+ this.energyBar[Math.floor((this.energy)/1000)];
+            this.timeR.text = "Energy: "+ this.energyBar[Math.floor((this.energy)/1000)];
             this.sky.tilePositionX += 0.5;
             this.floor.tilePositionX += 2;
             if(!this.wings.isPlaying && this.p1Bat.up){
                 this.wings.play();
             }
-            this.timeRight.text = "⧖" + Math.ceil((this.clock.delay - (this.time.now-this.startTime)) * 0.001);
            // if(this.input.x-this.p1Rocket.x<=(-2)){
              //   this.p1Rocket.moveLeft();
            // }else if(this.input.x-this.p1Rocket.x>=2){
@@ -227,6 +236,21 @@ class Play extends Phaser.Scene{
     shipExplode(ship){
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         ship.reset(); 
+        switch(Math.floor(Math.random()*4)){
+            case 0:
+                ship.x += game.config.width;
+            case 1:
+                ship.y -= borderUISize;
+                ship.x += borderUISize;
+            case 2:
+                ship.y -= borderUISize;
+                break;
+            case 3:
+                ship.y += borderUISize;
+                ship.x += borderUISize;
+                break;
+        }      
+        
         //create explosion sprite
         boom.anims.play('explode');             // play explode animation
         boom.on('animationcomplete', () => {    // callback after anim completes
@@ -241,9 +265,9 @@ class Play extends Phaser.Scene{
                 this.energy = this.energyMax;
             }
         }
-        this.scoreLeft.text = "Energy: "+ this.energyBar[Math.floor((this.energy-this.p1Bat.flyTime)/1000)];
-        this.timeRight.text = "⧖" + Math.ceil((this.clock.delay - (this.time.now-this.startTime)) * 0.001);
+        this.timeR.text = "Energy: "+ this.energyBar[Math.floor((this.energy-this.p1Bat.flyTime)/1000)];
+        this.scoreL.text = "Speed Modifier: x" + this.speedmod;
         this.sound.play('sfx_chomp');
-            
+        
     }
 }

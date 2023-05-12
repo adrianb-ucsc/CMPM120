@@ -30,6 +30,9 @@ class Bat extends Phaser.GameObjects.Sprite {
         frames: this.anims.generateFrameNumbers(texture, {start: 0, end: 1, first: 0})
       });
     }
+    goFaster(){
+      this.speed*=2;
+    }
     setgTime(n){
       this.gameTime=n;
     }
