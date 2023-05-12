@@ -16,24 +16,26 @@ class Play extends Phaser.Scene{
        // this.load.image('plant2', './assets/Plant2.png');
        // this.load.image('plant3', './assets/Plant3.png');
         // load spritesheet
-        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 8});
+        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 32, frameHeight: 64, startFrame: 0, endFrame: 7});
         //load atlas
        // this.load.atlas('bug', 'assets/shipAtlas.png', 'assets/ship.json');
     }
     create() {
+        this.wings = this.sound.add('sfx_wing', {
+            loop: true,
+          });
         //place tile sprite
         this.startTime=this.time.now;
         this.sky = this.add.tileSprite(0, 0, 640, 480, 'sky').setOrigin(0, 0);
         this.season3 = this.add.tileSprite(0, 0, 640, 480, 'summer3').setOrigin(0,0);
         this.season2 = this.add.tileSprite(0, 0, 640, 480, 'summer2').setOrigin(0,0);
-        this.floor = this.add.tileSprite(0, -borderUISize, 640, 480, 'summerf').setOrigin(0, 0);
+        
         //green UI background
         this.sky.setInteractive({});
-        
         //add rocket(p1)
         //this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - 2*borderPadding, 'flower').setOrigin(0.5, 0);
         this.p1Bat = new Bat(this, game.config.width/2 - 2*borderUISize, game.config.height/2, 'bat', 1, game.settings.spaceshipSpeed/2).setOrigin(0.5, 0);
-        //add spaceships
+        this.floor = this.add.tileSprite(0, -borderUISize, 640, 480, 'springfloor').setOrigin(0, 0);
        // this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
         //this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
        // this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
@@ -43,10 +45,10 @@ class Play extends Phaser.Scene{
         //foreground
         this.season1 = this.add.tileSprite(0, 0, 640, 480, 'summer1').setOrigin(0,0);
         //white borders
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0x843605).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0x843605).setOrigin(0,0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0x843605).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0x843605).setOrigin(0,0); 
+        this.add.rectangle(0, 0, game.config.width, borderUISize, 0x655057).setOrigin(0, 0);
+        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0x655057).setOrigin(0,0);
+        this.add.rectangle(0, 0, borderUISize, game.config.height, 0x655057).setOrigin(0, 0);
+        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0x655057).setOrigin(0,0); 
         //this.plant = this.add.sprite(game.config.width/2, game.config.height - borderUISize, 'plant2').setOrigin(0.5, 1);
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -56,8 +58,8 @@ class Play extends Phaser.Scene{
         //animation config
         this.anims.create({
             key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 8, first: 0}),
-            frameRate: 15
+            frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 7, first: 0}),
+            frameRate: 12
         });
         //initialize score
         this.p1Score = 0;
@@ -65,7 +67,7 @@ class Play extends Phaser.Scene{
         let scoreConfig = {
             fontFamily: 'courier',
             fontSize: '28px',
-            color: '#843605',
+            color: '#F0CF8E',
             align: 'right',
             padding: {
                 top: 5,
@@ -96,15 +98,20 @@ class Play extends Phaser.Scene{
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
           }
-        this.sky.tilePositionX += 0.5;
+       
         this.season3.tilePositionX += 0.75;
         this.season3.tilePositionY -= 0.1;
         this.season2.tilePositionX += 1;
         this.season2.tilePositionY -= 0.2;
         this.season1.tilePositionX += 1.5;
         this.season1.tilePositionY -= 0.3;
-        this.floor.tilePositionX += 2;
+        
         if(!this.gameOver){
+            this.sky.tilePositionX += 0.5;
+            this.floor.tilePositionX += 2;
+            if(!this.wings.isPlaying && this.p1Bat.up){
+                this.wings.play();
+            }
             this.timeRight.text = "⧖" + Math.ceil((this.clock.delay - (this.time.now-this.startTime)) * 0.001);
            // if(this.input.x-this.p1Rocket.x<=(-2)){
              //   this.p1Rocket.moveLeft();
@@ -118,6 +125,7 @@ class Play extends Phaser.Scene{
             });
             this.input.on('gameobjectup', (pointer, gameObhect, event) => {
                 this.p1Bat.goDOWN();
+                this.wings.stop();
             });
             //this.p1Rocket.update();
             this.p1Bat.update();
@@ -159,7 +167,7 @@ class Play extends Phaser.Scene{
         let endConfig = {
             fontFamily: 'courier',
             fontSize: '28px',
-            color: '#843605',
+            color: '#F0CF8E',
             align: 'right',
             padding: {
                 top: 5,
@@ -198,19 +206,7 @@ class Play extends Phaser.Scene{
         this.p1Score += ship.points;
         this.scoreLeft.text = "❁"+this.p1Score;
         this.timeRight.text = "⧖" + Math.ceil((this.clock.delay - (this.time.now-this.startTime)) * 0.001);
-        switch(Math.floor(Math.random()*4)){
-            case 0:
-                this.sound.play('sfx_explosion1');
-                break;
-            case 1:
-                this.sound.play('sfx_explosion2');
-                break;
-            case 2:
-                this.sound.play('sfx_explosion3');
-                break;
-            case 3:
-                this.sound.play('sfx_explosion4');
-                break;
-        }   
+        this.sound.play('sfx_chomp');
+            
     }
 }
