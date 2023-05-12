@@ -9,7 +9,7 @@ class Spaceship extends Phaser.GameObjects.Sprite {
       this.moveSpeed = speed;
       this.anims.create({
         key: 'flap',
-        frameRate: 5,
+        frameRate: 10,
         repeat: -1,
         frames: this.anims.generateFrameNames(texture,{prefix: fprefix, suffix: '.png', start:1, end: 2})
       });
