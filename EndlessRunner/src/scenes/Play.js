@@ -24,6 +24,11 @@ class Play extends Phaser.Scene{
         this.wings = this.sound.add('sfx_wing', {
             loop: true,
           });
+        this.music = this.sound.add('bgmusic', {
+            loop: true,
+            volume: 0.5
+        });
+        this.music.play();
         //place tile sprite
         this.startTime=this.time.now;
         this.sky = this.add.tileSprite(0, 0, 640, 480, 'sky').setOrigin(0, 0);
@@ -39,9 +44,9 @@ class Play extends Phaser.Scene{
        // this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 6, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
         //this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*7 + borderPadding*2, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
        // this.ship03 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*4, 'bug', 0, 1, game.settings.spaceshipSpeed, "ship-").setOrigin(0,0);
-        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed,"ship2-").setOrigin(0,0.5);
-        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0.5);
-        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'bug2', 0, 5, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0.5);
+        this.ship04 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 5, 'bug2', 0, 1.5*game.settings.spaceshipSpeed,"ship2-").setOrigin(0,0.5);
+        this.ship05 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'bug2', 0, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0.5);
+        this.ship06 = new Spaceship(this, game.config.width, borderUISize*8 + borderPadding*2, 'bug2', 0, 1.5*game.settings.spaceshipSpeed, "ship2-").setOrigin(0,0.5);
         //foreground
         this.season1 = this.add.tileSprite(0, 0, 640, 480, 'summer1').setOrigin(0,0);
         //white borders
@@ -61,6 +66,9 @@ class Play extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 7, first: 0}),
             frameRate: 12
         });
+        this.energyMax = 10000;
+        this.energy = this.energyMax;
+        this.energyBar = ['░░░░░░░░░░','▓░░░░░░░░░','▓▓░░░░░░░░', '▓▓▓░░░░░░░', '▓▓▓▓░░░░░░', '▓▓▓▓▓░░░░░', '▓▓▓▓▓▓░░░░', '▓▓▓▓▓▓▓░░░', '▓▓▓▓▓▓▓▓░░', '▓▓▓▓▓▓▓▓▓░', '▓▓▓▓▓▓▓▓▓▓'];
         //initialize score
         this.p1Score = 0;
           // display score
@@ -76,7 +84,7 @@ class Play extends Phaser.Scene{
             },
             fixedWidth: 0
         }
-        this.scoreLeft = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Click to fire", scoreConfig);
+        this.scoreLeft = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Hold mouse click to fly", scoreConfig);
         this.timeRight = this.add.text(borderUISize, borderUISize+borderPadding*2, "⧖" + 0.001*game.settings.gameTimer, scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
@@ -88,16 +96,25 @@ class Play extends Phaser.Scene{
         }, null, this);
     }
     update(){
+        this.p1Bat.setgTime(this.time.now);
+        if(this.p1Bat.start){
+            if(this.energy > 0){
+                this.input.on('gameobjectdown', (pointer, gameObject, event) => {
+                this.p1Bat.goUP();
+                });
+            }
+        }else{
         if (this.p1Bat.end == true){
             this.gameEnd();
         }
         //check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.music.stop();
             this.scene.restart();
         }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
-          }
+        }
        
         this.season3.tilePositionX += 0.75;
         this.season3.tilePositionY -= 0.1;
@@ -107,6 +124,18 @@ class Play extends Phaser.Scene{
         this.season1.tilePositionY -= 0.3;
         
         if(!this.gameOver){
+            if(this.energy > this.energyMax - this.p1Bat.flyTime){
+                if(this.energyMax-this.p1Bat.flyTime > 0){
+                    this.energy = this.energyMax - this.p1Bat.flyTime;
+                }else{
+                    this.energy = 0;
+                }
+                
+            }
+            if(this.energy == 0){
+                this.p1Bat.goDOWN();
+            }
+            this.scoreLeft.text = "Energy: "+ this.energyBar[Math.floor((this.energy)/1000)];
             this.sky.tilePositionX += 0.5;
             this.floor.tilePositionX += 2;
             if(!this.wings.isPlaying && this.p1Bat.up){
@@ -118,12 +147,14 @@ class Play extends Phaser.Scene{
            // }else if(this.input.x-this.p1Rocket.x>=2){
            //     this.p1Rocket.moveRight();
            // }
-            
-            this.input.on('gameobjectdown', (pointer, gameObject, event) => {
+            if(this.energy > 0){
+                this.input.on('gameobjectdown', (pointer, gameObject, event) => {
                 //this.p1Rocket.fire();
+
                 this.p1Bat.goUP();
             });
-            this.input.on('gameobjectup', (pointer, gameObhect, event) => {
+            }
+            this.input.on('gameobjectup', (pointer, gameObject, event) => {
                 this.p1Bat.goDOWN();
                 this.wings.stop();
             });
@@ -161,6 +192,7 @@ class Play extends Phaser.Scene{
           if (this.checkCollision(this.p1Bat, this.ship06)) {
             this.shipExplode(this.ship06);
           }
+        }
     }
     gameEnd(){
         if(!this.gameOver){
@@ -202,9 +234,14 @@ class Play extends Phaser.Scene{
             boom.destroy();                       // remove explosion sprite
         });
         //score add and repaint
-        this.clock.delay += ship.points*1000;
-        this.p1Score += ship.points;
-        this.scoreLeft.text = "❁"+this.p1Score;
+        if(this.energy < this.energyMax){
+            if(this.energy + 1000 <= this.energyMax){
+                this.energy += 1000;
+            }else{
+                this.energy = this.energyMax;
+            }
+        }
+        this.scoreLeft.text = "Energy: "+ this.energyBar[Math.floor((this.energy-this.p1Bat.flyTime)/1000)];
         this.timeRight.text = "⧖" + Math.ceil((this.clock.delay - (this.time.now-this.startTime)) * 0.001);
         this.sound.play('sfx_chomp');
             
