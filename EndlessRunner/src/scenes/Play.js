@@ -8,7 +8,6 @@ class Play extends Phaser.Scene{
         this.load.atlas('bug2', './assets/ship2Atlas.png', 'assets/ship2.json');
         this.load.image('sky', './assets/backgroundsky.png');
         this.load.spritesheet('bat', './assets/bat.png', {frameWidth: 128, frameHeight: 96, startFrame: 0, endFrame: 1});
-        this.load.image('summerf', './assets/background-summer.png');
         this.load.image('summer3', './assets/summer3.png');
         this.load.image('summer2', './assets/summer2.png');
         this.load.image('summer1', './assets/summer1.png');
@@ -16,6 +15,7 @@ class Play extends Phaser.Scene{
        // this.load.image('plant2', './assets/Plant2.png');
        // this.load.image('plant3', './assets/Plant3.png');
         // load spritesheet
+        
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 32, frameHeight: 64, startFrame: 0, endFrame: 7});
         //load atlas
        // this.load.atlas('bug', 'assets/shipAtlas.png', 'assets/ship.json');
@@ -28,9 +28,8 @@ class Play extends Phaser.Scene{
             loop: true,
             volume: 0.5
         });
-        this.music.play();
+        this.startTime=0;
         //place tile sprite
-        this.startTime=this.time.now;
         this.sky = this.add.tileSprite(0, 0, 640, 480, 'sky').setOrigin(0, 0);
         this.season3 = this.add.tileSprite(0, 0, 640, 480, 'summer3').setOrigin(0,0);
         this.season2 = this.add.tileSprite(0, 0, 640, 480, 'summer2').setOrigin(0,0);
@@ -99,13 +98,16 @@ class Play extends Phaser.Scene{
         }, null, this);
     }
     update(){
-        this.p1Bat.setgTime(this.time.now);
+        this.p1Bat.setgTime(this.time.now-this.startTime);
         if(this.p1Bat.start){
             if(this.energy > 0){
                 this.input.on('gameobjectdown', (pointer, gameObject, event) => {
                 this.p1Bat.goUP();
                 this.startmessage.text = ' ';
-                this.time.now=0;
+                if(!this.music.isPlaying){
+                    this.startTime=this.time.now;
+                    this.music.play();
+                }
                 });
             }
         }else{
@@ -131,8 +133,8 @@ class Play extends Phaser.Scene{
         
         if(!this.gameOver){
             if(this.goFasterChance>=1){
-                if(Math.random()*this.time.now>=game.settings.gameTimer&&this.time.now-this.goFasterChance>5000){
-                    this.goFasterChance=this.time.now;
+                if(Math.random()*(this.time.now-this.startTime)>=game.settings.gameTimer&&(this.time.now-this.startTime)-this.goFasterChance>5000){
+                    this.goFasterChance=(this.time.now-this.startTime);
                     this.p1Bat.goFaster();
                     this.speedmod+=1;
                     this.scoreL.text = "Speed Modifier: x" + this.speedmod;
@@ -149,7 +151,7 @@ class Play extends Phaser.Scene{
             if(this.energy == 0){
                 this.p1Bat.goDOWN();
             }
-            this.timeR.text = "Energy: "+ this.energyBar[Math.floor((this.energy)/1000)];
+            this.timeR.text = "Energy: "+this.energyBar[Math.floor((this.energy)/1000)];
             this.sky.tilePositionX += 0.5;
             this.floor.tilePositionX += 2;
             if(!this.wings.isPlaying && this.p1Bat.up){
