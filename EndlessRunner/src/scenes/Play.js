@@ -85,8 +85,9 @@ class Play extends Phaser.Scene{
             },
             fixedWidth: 0
         }
-        this.timeR = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Hold mouse click to fly", scoreConfig);
-        this.scoreL = this.add.text(borderUISize, borderUISize+borderPadding*2, "⧖" + 0.001*game.settings.gameTimer, scoreConfig);
+        this.startmessage=this.add.text(game.config.width/2, game.config.height/2, 'Click to start', scoreConfig).setOrigin(0.5);
+        this.timeR = this.add.text(borderUISize, borderUISize*2 + borderPadding*2, "Eat bugs for energy", scoreConfig);
+        this.scoreL = this.add.text(borderUISize, borderUISize+borderPadding*2, "Hold mouse button to fly", scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
         // 60-second play clock
@@ -103,6 +104,8 @@ class Play extends Phaser.Scene{
             if(this.energy > 0){
                 this.input.on('gameobjectdown', (pointer, gameObject, event) => {
                 this.p1Bat.goUP();
+                this.startmessage.text = ' ';
+                this.time.now=0;
                 });
             }
         }else{
@@ -126,11 +129,11 @@ class Play extends Phaser.Scene{
         this.season1.tilePositionY -= 0.3;
         
         if(!this.gameOver){
-            if(this.goFasterChance>1){
+            if(this.goFasterChance>=1){
                 if(Math.random()*this.time.now>=game.settings.gameTimer&&this.time.now-this.goFasterChance>5000){
                     this.goFasterChance=this.time.now;
                     this.p1Bat.goFaster();
-                    this.speedmod*=2;
+                    this.speedmod+=1;
                     this.scoreL.text = "Speed Modifier: x" + this.speedmod;
                 }
             }
@@ -220,7 +223,7 @@ class Play extends Phaser.Scene{
         this.ship04.freeze();
         this.ship05.freeze();
         this.ship06.freeze();
-        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', endConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, 'SCORE: '+this.speedmod, endConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', endConfig).setOrigin(0.5);
         this.gameOver = true;
         }

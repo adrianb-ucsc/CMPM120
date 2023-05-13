@@ -5,6 +5,7 @@ class Bat extends Phaser.GameObjects.Sprite {
       // add object to existing scene
       scene.add.existing(this);
       this.moveSpeed = speed;
+      this.baseSpeed = speed;
       this.end = false;
       this.up = false;
       this.start = true;
@@ -31,7 +32,7 @@ class Bat extends Phaser.GameObjects.Sprite {
       });
     }
     goFaster(){
-      this.speed*=2;
+      this.moveSpeed+=this.baseSpeed;
     }
     setgTime(n){
       this.gameTime=n;
