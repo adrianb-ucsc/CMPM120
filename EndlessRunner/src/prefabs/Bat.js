@@ -38,6 +38,7 @@ class Bat extends Phaser.GameObjects.Sprite {
       this.gameTime=n;
     }
     goUP(){
+      if(!(this.y>=game.config.height-this.height)){
         if(this.start){
             this.start = false;
         }
@@ -45,12 +46,15 @@ class Bat extends Phaser.GameObjects.Sprite {
         this.up = true;
         this.anims.stop('glide');
         this.anims.play('fly');;
+      }
     }
     goDOWN(){
+      if(!(this.y>=game.config.height-this.height)){
         this.up = false;
         this.anims.stop('fly');
         this.anims.play('glide');
         this.flyTime = 0;
+      }
     }
     update(){
         //move spaceship left

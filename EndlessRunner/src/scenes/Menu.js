@@ -61,13 +61,14 @@ class Menu extends Phaser.Scene{
             // easy mode
             game.settings = {
               spaceshipSpeed: 2,
-              gameTimer: 30000    
+              gameTimer: 20000    
             }
             this.sound.play('sfx_select');
             this.scene.start('playScene');    
         }
           if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-              this.credits.text="Made in Phaser 3. \n Art, Sound, and Programming by Adrian Bruce"
+            this.sound.play('sfx_select');
+            this.credits.text="Made in Phaser 3. \n Art, Sound, and Programming by Adrian Bruce"
         }
     }
 }
