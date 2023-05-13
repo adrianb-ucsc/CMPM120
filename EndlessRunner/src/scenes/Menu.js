@@ -9,14 +9,8 @@ class Menu extends Phaser.Scene{
         this.load.image('spring2', './assets/spring2.png');
         this.load.image('spring3', './assets/spring3.png');
         this.load.image('springfloor', './assets/background-spring.png');
-        this.load.image('title', './assets/titleBig.png');
         this.load.audio('sfx_chomp', './assets/chomp.wav');
         this.load.audio('sfx_wing', './assets/wing.wav');
-        this.load.audio('sfx_explosion1', './assets/sound.wav');
-        this.load.audio('sfx_explosion2', './assets/sound (1).wav');
-        this.load.audio('sfx_explosion3', './assets/sound (2).wav');
-        this.load.audio('sfx_explosion4', './assets/sound (3).wav');
-        this.load.audio('sfx_rocket', './assets/sound (5).wav');
         this.load.audio('bgmusic', './assets/BackgroundMusic.wav');
 
     }
