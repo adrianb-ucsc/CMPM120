@@ -41,6 +41,7 @@ Include in-game credits for all roles, assets, music, etc. (5)
 >>It is fairly simple, but it worked out exactly how I wanted it to, and honestly sometimes finding a simple way of doing something that works well is really the goal.
 >>Basically, I multiply Math.random() with this.time.now, and if the result is >= the game timer variable (when it can start getting faster) then the speed increases.
 >>I also have it check to make sure this hasn't happened in the last 5 seconds, so that if a player is playing for long enough the rate of acceleration is still manageable.
+>>Also, I did some randomization for where the bugs reset to, so there's still only three of them (two later in the game) but they're not in set lanes anymore.
 ...have a great visual style? Does it use music or art that you're particularly proud of? Are you trying something new or clever with the endless runner form? (5)
 >>I'm pretty proud of how the music turned out! I haven't done much work with making music digitally before, but I am really happy with it!
 
