@@ -4,7 +4,7 @@ let config = {
         pixelArt: true
     },
     width: 320,
-    height: 640,
+    height: 240,
     physics: {
         default: 'arcade',
         arcade: {
@@ -14,4 +14,4 @@ let config = {
     zoom: 2,
     scene: [ Overworld ]
 }
-const game = new Phaser.game(config)
+const game = new Phaser.Game(config)
