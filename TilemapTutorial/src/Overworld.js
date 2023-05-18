@@ -18,7 +18,7 @@ class Overworld extends Phaser.Scene{
 
         const bgLayer = map.createLayer('Background', tileset, 0, 0)
         const layer2 = map.createLayer('Tile Layer 2', tileset, 0, 0)
-        const layer3 = map.createLayer('Tile Layer 3', tileset, 0, 0)
+        const layer3 = map.createLayer('Tile Layer 3', tileset, 0, 0).setDepth(100)
 
         this.slime = this.physics.add.sprite(32, 32, 'slime', 0)
         this.anims.create({
@@ -35,6 +35,10 @@ class Overworld extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.cameras.main.startFollow(this.slime, true, 0.25, 0.25)
         this.physics.world.bounds.setTo(0, 0, map.widthInPixels, map.heightInPixels)
+        this.physics.add.collider(this.slime, layer2)
+        this.physics.add.collider(this.slime, layer3)
+        layer2.setCollisionByProperty({collides: true})
+        layer3.setCollisionByProperty({collides: true})
         this.cursors = this.input.keyboard.createCursorKeys()
     }
     update(){
