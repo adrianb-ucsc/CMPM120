@@ -18,7 +18,7 @@ class Overworld extends Phaser.Scene{
 
         const bgLayer = map.createLayer('Background', tileset, 0, 0)
         const layer2 = map.createLayer('Tile Layer 2', tileset, 0, 0)
-        const layer3 = map.createLayer('Tile Layer 3', tileset, 0, 0).setDepth(100)
+        const layer3 = map.createLayer('Tile Layer 3', tileset, 0, 0).setDepth(10)
 
         this.slime = this.physics.add.sprite(32, 32, 'slime', 0)
         this.anims.create({
