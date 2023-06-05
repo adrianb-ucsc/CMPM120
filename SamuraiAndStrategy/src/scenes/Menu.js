@@ -11,16 +11,16 @@ class Menu extends Phaser.Scene{
     }
     create() {
         this.add.sprite(game.config.width/2, game.config.height/2, 'menuBg').setOrigin(0.5, 0.5);
-        clickCred = this.add.sprite(game.config.width*(12/16), game.config.height*(6/16), 'credButton').setOrigin(0, 1);
-        clickPlay = this.add.sprite(game.config.width*(12/16), game.config.height*(3/16), 'playButton').setOrigin(0, 1);
-        clickCred.setInteractive();
-        clickPlay.setInteractive();
+        this.clickCred = this.add.sprite(game.config.width*(12/16), game.config.height*(6/16), 'credButton').setOrigin(0, 1);
+        this.clickPlay = this.add.sprite(game.config.width*(12/16), game.config.height*(3/16), 'playButton').setOrigin(0, 1);
+        this.clickCred.setInteractive();
+        this.clickPlay.setInteractive();
 
-        clickCred.on('pointerover', () => clickCred.setFrame(1));
-        clickCred.on('pointerout', () => clickCred.setFrame(0));
+        this.clickCred.on('pointerover', () => clickCred.setFrame(1));
+        this.clickCred.on('pointerout', () => clickCred.setFrame(0));
 
-        clickPlay.on('pointerover', () => clickPlay.setFrame(1));
-        clickPlay.on('pointerout', () => clickPlay.setFrame(0));
+        this.clickPlay.on('pointerover', () => clickPlay.setFrame(1));
+        this.clickPlay.on('pointerout', () => clickPlay.setFrame(0));
     
     }
     update(){
