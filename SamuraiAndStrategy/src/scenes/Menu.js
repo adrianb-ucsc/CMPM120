@@ -16,11 +16,11 @@ class Menu extends Phaser.Scene{
         this.clickCred.setInteractive();
         this.clickPlay.setInteractive();
 
-        this.clickCred.on('pointerover', () => clickCred.setFrame(1));
-        this.clickCred.on('pointerout', () => clickCred.setFrame(0));
+        this.clickCred.on('pointerover', () => this.clickCred.setFrame(1));
+        this.clickCred.on('pointerout', () => this.clickCred.setFrame(0));
 
-        this.clickPlay.on('pointerover', () => clickPlay.setFrame(1));
-        this.clickPlay.on('pointerout', () => clickPlay.setFrame(0));
+        this.clickPlay.on('pointerover', () => this.clickPlay.setFrame(1));
+        this.clickPlay.on('pointerout', () => this.clickPlay.setFrame(0));
     
     }
     update(){
