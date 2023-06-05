@@ -11,8 +11,8 @@ class Menu extends Phaser.Scene{
     }
     create() {
         this.add.sprite(game.config.width/2, game.config.height/2, 'menuBg').setOrigin(0.5, 0.5);
-        this.add.sprite(game.config.width*(3/4), 10+game.config.height/2, 'credButton').setOrigin(0, 1);
-        this.add.sprite(game.config.width*(3/4), (-10)+game.config.height/2, 'playButton').setOrigin(0, 0);
+        this.add.sprite(game.config.width*(7/8), game.config.height*(6/16), 'credButton').setOrigin(0.5, 0);
+        this.add.sprite(game.config.width*(7/8), game.config.height*(3/16), 'playButton').setOrigin(0.5, 0);
     }
     update(){
         
