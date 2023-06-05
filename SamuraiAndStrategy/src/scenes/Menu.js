@@ -21,6 +21,7 @@ class Menu extends Phaser.Scene{
 
         this.clickPlay.on('pointerover', () => this.clickPlay.setFrame(1));
         this.clickPlay.on('pointerout', () => this.clickPlay.setFrame(0));
+        this.clickPlay.on('pointerdown', () => this.scene.start('playScene'));
     
     }
     update(){
