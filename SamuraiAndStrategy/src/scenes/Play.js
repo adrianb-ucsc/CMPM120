@@ -1,8 +1,8 @@
-class Play extends Phaser.Scene{
-    constructor(){
+class Play extends Phaser.Scene {
+    constructor() {
         super("playScene");
     }
-    preload(){
+    preload() {
         this.load.image('map', './assets/SamuraiGameMap.png');
         this.load.atlas('banditTrack', './assets/BanditTrack.png', 'assets/BanditTrack.json');
     }
@@ -16,7 +16,7 @@ class Play extends Phaser.Scene{
                 top: 2,
                 bottom: 2,
             },
-            fixedWidth: game.config.width*(1/2)
+            fixedWidth: game.config.width * (1 / 2)
         }
         let subtitleConfig = {
             fontFamily: 'EastSea',
@@ -27,7 +27,7 @@ class Play extends Phaser.Scene{
                 top: 5,
                 bottom: 0,
             },
-            fixedWidth: game.config.width*(1/2)
+            fixedWidth: game.config.width * (1 / 2)
         }
         let titleConfig = {
             fontFamily: 'EastSea',
@@ -59,7 +59,7 @@ class Play extends Phaser.Scene{
         //they say there are ~40 bandits, but the battle plan they use to track the bandits they kill has 33 spaces to track the deaths. 
         //I'm assuming, therefore, that killing 33 bandits is a victory.
         this.totBandits = 33;
-        
+
         this.deadBandits = 0;
         this.deadVillagers = 0;
 
@@ -74,31 +74,56 @@ class Play extends Phaser.Scene{
         this.season = ['Spring', 'Summer', 'Fall', 'Winter'];
         this.week = 1;
 
-        function menuButton(x){
+        this.buildingSupplies = 0;
+        this.rice = 100;
+
+        this.warriors = 0;
+        this.deadWarriors = 0;
+        this.samSt = 0;
+        this.samSw = 0;
+        this.samTe = 0;
+        this.samStu = 0;
+        this.merc = 0;
+
+        function menuButton(x) {
             x.scene.start("menuScene");
         }
 
         //adding background and text
-        this.add.sprite(game.config.width/2, game.config.height/2, 'map').setOrigin(0.5, 0.5);
-        
-        this.toMenu = new Buttont(this, game.config.width*(1/40), -5, "Menu", " (WARNING: may RESET progress)", menuConfig, menuButton);
-        this.report = this.add.text(game.config.width*(2/8), game.config.height/40, 'Your scouts have reported BANDITS in the area. \nYou should try to recruit some SAMURAI to DEFEND YOUR VILLAGE.', textConfig);
-        
-        this.add.text(game.config.width*(7/8), game.config.height/40, 'Bandits:', titleConfig);
-        
-        this.add.text(game.config.width*(1/40), game.config.height/40, 'Time: ', titleConfig);
-        this.time = this.add.text(game.config.width*(3.65/40), game.config.height*(2/40), 'Spring, Week 1', subtitleConfig);
+        this.add.sprite(game.config.width / 2, game.config.height / 2, 'map').setOrigin(0.5, 0.5);
 
-        this.add.text(game.config.width*(1/40), game.config.height*(4.5/40), 'Defenses:', titleConfig);
-        this.northDef = this.add.text(game.config.width*(1/40), game.config.height*(8/40), 'North:' + '0', textConfig);
-        this.eastDef = this.add.text(game.config.width*(1/40), game.config.height*(10/40), 'East:' + '0', textConfig);
-        this.southDef = this.add.text(game.config.width*(1/40), game.config.height*(12/40), 'South:' + '0', textConfig);
-        this.westDef = this.add.text(game.config.width*(1/40), game.config.height*(14/40), 'West:' + '0', textConfig);
-        
-        this.add.text(game.config.width*(1/40), game.config.height*(17/40), 'Resources:', titleConfig);
-        this.uVil = this.northDef = this.add.text(game.config.width*(1/40), game.config.height*(20/40), 'Untrained Villagers: ' + (this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers), textConfig);
+        this.toMenu = new Buttont(this, game.config.width * (1 / 40), -5, "Menu", " (WARNING: may RESET progress)", menuConfig, menuButton);
+        this.report = this.add.text(game.config.width * (2 / 8), game.config.height / 40, 'Your scouts have reported BANDITS in the area. \nYou should try to recruit some SAMURAI to DEFEND YOUR VILLAGE.', textConfig);
+
+        this.add.text(game.config.width * (7 / 8), game.config.height / 40, 'Bandits:', titleConfig);
+
+        this.add.text(game.config.width * (1 / 40), game.config.height / 40, 'Time: ', titleConfig);
+        this.time = this.add.text(game.config.width * (3.65 / 40), game.config.height * (2 / 40), 'Spring, Week 1', subtitleConfig);
+
+        this.add.text(game.config.width * (1 / 40), game.config.height * (4.5 / 40), 'Defenses:', titleConfig);
+        this.northDef = this.add.text(game.config.width * (1 / 40), game.config.height * (8 / 40), 'North:' + '0', textConfig);
+        this.eastDef = this.add.text(game.config.width * (1 / 40), game.config.height * (10 / 40), 'East:' + '0', textConfig);
+        this.southDef = this.add.text(game.config.width * (1 / 40), game.config.height * (12 / 40), 'South:' + '0', textConfig);
+        this.westDef = this.add.text(game.config.width * (1 / 40), game.config.height * (14 / 40), 'West:' + '0', textConfig);
+
+        this.add.text(game.config.width * (1 / 40), game.config.height * (17 / 40), 'Resources:', titleConfig);
+        this.uVil = this.add.text(game.config.width * (1 / 40), game.config.height * (20 / 40), 'Untrained Villagers: ' + (this.totVillagers - this.deadVillagers - this.t1Villagers - this.t2Villagers), textConfig);
+        this.t1Vil = this.add.text(game.config.width * (1 / 40), game.config.height * (21 / 40), 'Novice Villagers: ' + (this.t1Villagers), textConfig);
+        this.t1Vil = this.add.text(game.config.width * (1 / 40), game.config.height * (22 / 40), 'Expert Villagers: ' + (this.t2Villagers), textConfig);
+        this.add.text(game.config.width * (1 / 40), game.config.height * (23 / 40), 'Warriors: ', textConfig);
+        this.samStrat = this.add.text(game.config.width * (2 / 40), game.config.height * (24 / 40), 'Samurai (Strategist): ' + (this.samSt), textConfig);
+        this.samSword = this.add.text(game.config.width * (2 / 40), game.config.height * (25 / 40), 'Samurai (Swordsman): ' + (this.samSw), textConfig);
+        this.samTeach = this.add.text(game.config.width * (2 / 40), game.config.height * (26 / 40), 'Samurai (Teacher): ' + (this.samTe), textConfig);
+        this.samStudent = this.add.text(game.config.width * (2 / 40), game.config.height * (27 / 40), 'Samurai (Student): ' + (this.samStu), textConfig);
+        this.mercenary = this.add.text(game.config.width * (2 / 40), game.config.height * (28 / 40), 'Mercenaries: ' + (this.merc), textConfig);
+
+        this.buildMats = this.add.text(game.config.width * (1 / 40), game.config.height * (30 / 40), 'Building Materials: ' + (this.buildingSupplies), textConfig);
+        this.riceLeft = this.add.text(game.config.width * (1 / 40), game.config.height * (32 / 40), 'Rice: ' + (this.rice) + "%", textConfig);
+
+        this.deadVilList = this.add.text(game.config.width * (1 / 40), game.config.height * (34 / 40), 'Dead Villagers: ' + (this.deadVillagers) , textConfig);
+        this.deadWarList = this.add.text(game.config.width * (1 / 40), game.config.height * (36 / 40), 'Dead Warriors: ' + (this.deadWarriors) , textConfig);
     }
-    update(){
-       
+    update() {
+
     }
 }
