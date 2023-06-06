@@ -1,7 +1,7 @@
 /*
 Adrian Bruce
-Samurai & Strategy v0.01
-Approx. 8 hours so far(including time spent making assets)
+Samurai & Strategy v0.11
+Approx. 20 hours so far(including time spent making assets)
 */
 let config = {
     type: Phaser.CANVAS,
