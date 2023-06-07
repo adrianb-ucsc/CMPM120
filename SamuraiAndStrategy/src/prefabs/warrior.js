@@ -26,26 +26,29 @@ class Warrior{
                 this.testRes = "This warrior isn't a samurai, but they do have combat experience. Their help is probably easier to afford."
                 break;
         }
+        this.typeNum = typeNum;
         this.str = 5;
         this.def = 5;
-        this.plan = 1;
-        this.trainR = 1;
+        this.plan = 0.25;
+        this.trainR = 0.25;
         this.cost = 10;
         this.cost = Phaser.Math.Between(10, 15);
-        this.studentMult = 1;
+        this.studentBonus = 1;
         this.recruitSuccess = true;
         if(this.type == "Samurai(Strategist)"){
-            this.plan *= 2;
+            this.plan = 1;
         }
         if(this.type=="Samurai(Swordsman)"){
             this.str *= 1.5;
             this.def *= 1.5;
         }
         if(this.type=="Samurai(Teacher)"){
-            this.trainR = 2;
+            this.trainR = 1;
         }
         if(this.type=="Samurai(Student)"){
-            this.studentMult = 1.5;
+            this.studentBonus = 1.25;
+            this.plan = 0.2;
+            this.trainR = 0.2;
         }
         if(this.type=="Mercenary"){
             this.str -= 1;
@@ -56,6 +59,9 @@ class Warrior{
             this.recruitSuccess = false;
         }
     }
+    gettypeNum(){
+        return this.typeNum;
+    }
     attack(){
         return this.str;
     }
@@ -64,6 +70,9 @@ class Warrior{
             this.cost =Math.floor(this.cost*(Phaser.Math.FloatBetween(1.1, 2.0))) ;
         }
         return this.testRes; 
+    }
+    getPlan(){
+        return this.plan;
     }
     getTrainR(){
         return this.trainR;
@@ -74,8 +83,8 @@ class Warrior{
     getCost(){
         return this.cost;
     }
-    getStudentMult(){
-        return this.StudentMult;
+    getStudentBonus(){
+        return this.studentBonus;
     }
     getType(){
         return this.type;
@@ -110,26 +119,29 @@ class Warrior{
                 this.testRes = "This warrior isn't a samurai, but they do have combat experience. Their help is probably easier to afford, too."
                 break;
         }
+        this.typeNum = x;
         this.str = 5;
         this.def = 5;
-        this.plan = 1;
-        this.trainR = 1;
+        this.plan = 0.25;
+        this.trainR = 0.25;
         this.cost = 10;
         this.cost = Phaser.Math.Between(10, 15);
-        this.studentMult = 1;
+        this.studentBonus = 1;
         this.recruitSuccess = true;
         if(this.type == "Samurai(Strategist)"){
-            this.plan *= 2;
+            this.plan = 1;
         }
         if(this.type=="Samurai(Swordsman)"){
             this.str *= 1.5;
             this.def *= 1.5;
         }
         if(this.type=="Samurai(Teacher)"){
-            this.trainR = 2;
+            this.trainR = 1;
         }
         if(this.type=="Samurai(Student)"){
-            this.studentMult = 1.5;
+            this.studentBonus = 1.25;
+            this.plan = 0.2;
+            this.trainR = 0.2
         }
         if(this.type=="Mercenary"){
             this.str -= 1;

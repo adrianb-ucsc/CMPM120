@@ -111,6 +111,7 @@ class Play extends Phaser.Scene {
         this.locList = ['North', 'East', 'South', 'West'];
         this.vilsGathering = 0;
         this.advancedTrain = false;
+        this.samTaskMults = [0, 1, 0, 1];
 
 
         //adding background and text
@@ -200,7 +201,11 @@ class Play extends Phaser.Scene {
             }   
         }
         if(this.canAfford&&trgt.recruit()&&this.warriors<this.maxWarriors){
-                this.warriorlist[this.warriors] = trgt;
+                if(this.warriors == 0){
+                    this.warriorlist[this.warriors] = trgt;
+                }else{
+                    this.warriorlist[this.warriors] = new Warrior(trgt.gettypeNum());
+                }
                 this.warriors+=1;
                 switch(trgt.getType()){
                     case "Samurai(Strategist)":
@@ -271,44 +276,65 @@ class Play extends Phaser.Scene {
                 this.buildingSupplies -= this.vilsBuilding;
                 switch(this.buildLoc){
                     case 0: 
-                        this.northDef += this.vilsBuilding;
+                        this.northDef += Math.floor(this.vilsBuilding*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 1:
-                        this.eastDef += this.vilsBuilding;
+                        this.eastDef += Math.floor(this.vilsBuilding*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 2:
-                        this.southDef += this.vilsBuilding;
+                        this.southDef += Math.floor(this.vilsBuilding*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 3:
-                        this.westDef += this.vilsBuilding;
+                        this.westDef += Math.floor(this.vilsBuilding*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                 }
             }else{
                 switch(this.buildLoc){
                     case 0: 
-                        this.northDef += this.buildingSupplies;
+                        this.northDef += Math.floor(this.buildingSupplies*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 1:
-                        this.eastDef += this.buildingSupplies;
+                        this.eastDef += Math.floor(this.buildingSupplies*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 2:
-                        this.southDef += this.buildingSupplies;
+                        this.southDef += Math.floor(this.buildingSupplies*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                     case 3:
-                        this.westDef += this.buildingSupplies;
+                        this.westDef += Math.floor(this.buildingSupplies*this.samTaskMults[0]*this.samTaskMults[1]);
                         break;
                 }
                 this.buildingSupplies = 0;
             }
             if(!this.advancedTrain){
                 this.temp = Phaser.Math.FloatBetween(0.1, 0.5);
-                if(Math.ceil(this.temp * this.vilsTraining)<=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers)){
-                    this.t1Villagers += Math.ceil(this.temp * this.vilsTraining);
+                if(Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3])<=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers)){
+                    this.t1Villagers += Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
                 }else{
                     this.t1Villagers+=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers);
                 }
+            }else{
+                this.temp = Phaser.Math.FloatBetween(0.01, 0.25);
+                if(Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3])<=(this.t1Villagers)){
+                    this.t1Villagers -= Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
+                    this.t2Villagers += Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
+                }else{
+                    this.t2Villagers+=(this.t1Villagers);
+                }
             }
             this.updateDefAndRes();
+            this.warriorIndex = 0;
+            this.samuraiAssignable=true;
+            this.samTaskMults[0] = 0;
+            this.samTaskMults[1] = 1;
+            this.samTaskMults[2] = 0;
+            this.samTaskMults[3] = 1;
+            this.action1.setText("Assign " + this.warriorlist[this.warriorIndex].getType());
+            this.action2.setInteractive();
+            this.action2.txt2 = "x Building Defenses";
+            this.action3.txt2 = "x Training Villagers";
+            this.action3.setInteractive();
+            this.action5.setInteractive();
+            this.action6.setInteractive();
         }
     }
 
@@ -360,10 +386,10 @@ class Play extends Phaser.Scene {
         this.action5.txt = "o Auto Assign";
         this.action5.txt2 = "x Auto Assign";
 
-        this.action6.setInteractive();
-        this.action6.setText("o Auto Assign All");
-        this.action6.txt = "o Auto Assign All";
-        this.action6.txt2 = "x Auto Assign All";
+        this.action6.disableInteractive();
+        this.action6.setText("o");
+        this.action6.txt = "";
+        this.action6.txt2 = "";
 
         //setting up the new buttons
         this.label7 = this.add.text(game.config.width * (8.5 / 16), game.config.height * (31 / 40), 'Gathering: 0/75', this.textConfig);
@@ -488,6 +514,43 @@ class Play extends Phaser.Scene {
         }
         this.updateLabelsSumFal();
     }
+    assign(sam, task){//assigns a samurai to a task
+        if(task == 'build'){
+            this.samTaskMults[0]+=sam.getPlan();
+            this.samTaskMults[1]*=sam.getStudentBonus();
+        }else{
+            if(task == 'train'){
+                this.samTaskMults[2]+=sam.getTrainR();
+                this.samTaskMults[3]*=sam.getStudentBonus();
+            }
+        }
+        if(this.warriorIndex<(this.warriors-1)){
+            this.warriorIndex+=1;
+            this.action1.setText("Assign " + this.warriorlist[this.warriorIndex].getType());
+        }else{
+            this.samuraiAssignable=false;
+            this.action1.setText("All warriors assigned for the week");
+            this.action2.disableInteractive();
+            this.action3.disableInteractive();
+            this.action5.disableInteractive();
+            this.action6.disableInteractive();
+        }
+    }
+    autoAssignSam(sam){
+        if(sam.getType()=="Samurai(Strategist)"){
+            this.assign(sam, 'build');
+        }else{
+            if(sam.getType()=="Samurai(Teacher)"){
+                this.assign(sam, 'train');
+            }else{
+                if(this.samTaskMults[0]<this.samTaskMults[3]){
+                    this.assign(sam, 'build');
+                }else{
+                    this.assign(sam, 'train');
+                }
+            }
+        }
+    }
     
     //Below this are the functions that determine what each button does. I started structuring it like this when there were fewer buttons, but it was working well and I wanted to keep things consistent, so I decided to stick with it.
     action1Handler(a, b){
@@ -552,7 +615,6 @@ class Play extends Phaser.Scene {
             case 2:
                 switch(b){
                     case 1:
-                        break;
                     case 2:
                     case 3:
                     case 4:
@@ -563,7 +625,7 @@ class Play extends Phaser.Scene {
                     case 9:
                     case 10:
                     case 11:
-                    case 12:
+                    case 12: this.assign(this.warriorlist[this.warriorIndex], 'build')
                     default:
                         break;
                 }
@@ -598,7 +660,6 @@ class Play extends Phaser.Scene {
             case 2:
                 switch(b){
                     case 1:
-                        break;
                     case 2:
                     case 3:
                     case 4:
@@ -609,7 +670,8 @@ class Play extends Phaser.Scene {
                     case 9:
                     case 10:
                     case 11:
-                    case 12:
+                    case 12: 
+                        this.assign(this.warriorlist[this.warriorIndex], 'train')
                     default:
                         break;
                 }
@@ -634,10 +696,10 @@ class Play extends Phaser.Scene {
                     case 9:
                     case 10:
                     case 11:
-                    case 12:
-                        this.nextWeek();
                         this.candidate.remake(Phaser.Math.Between(0, 5));
                         this.action3.txt2 = "x Recruit Cost: " + this.candidate.getCost() +"% of rice.";
+                    case 12:
+                        this.nextWeek();
                     default:
                         break;
                 }
@@ -675,7 +737,6 @@ class Play extends Phaser.Scene {
             case 2:
                 switch(b){
                     case 1:
-                        break;
                     case 2:
                     case 3:
                     case 4:
@@ -687,6 +748,8 @@ class Play extends Phaser.Scene {
                     case 10:
                     case 11:
                     case 12:
+                       this.autoAssignSam(this.warriorlist[this.warriorIndex]);
+                       break;
                     default:
                         break;
                 }
@@ -704,7 +767,6 @@ class Play extends Phaser.Scene {
             case 2:
                 switch(b){
                     case 1:
-                        break;
                     case 2:
                     case 3:
                     case 4:
@@ -716,6 +778,7 @@ class Play extends Phaser.Scene {
                     case 10:
                     case 11:
                     case 12:
+                        break;
                     default:
                         break;
                 }
