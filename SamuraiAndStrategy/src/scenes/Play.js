@@ -363,7 +363,7 @@ class Play extends Phaser.Scene {
         this.week = 1;
         this.sound.play('transition');
         if(this.seasonInd == 1){
-            this.winterSetup();
+            this.summerSetup();
         }
         if(this.seasonInd ==2){
             this.report1.setText("The bandits have begun to attack.");
