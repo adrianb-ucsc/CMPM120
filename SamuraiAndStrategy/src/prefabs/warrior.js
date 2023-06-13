@@ -27,13 +27,14 @@ class Warrior{
                 break;
         }
         this.typeNum = typeNum;
-        this.str = 5;
+        this.str = 15;
         this.def = 5;
         this.plan = 0.25;
         this.trainR = 0.25;
         this.cost = 10;
         this.cost = Phaser.Math.Between(10, 15);
         this.studentBonus = 1;
+        this.location = 0;
         this.recruitSuccess = true;
         if(this.type == "Samurai(Strategist)"){
             this.plan = 1;
@@ -88,6 +89,9 @@ class Warrior{
     }
     getType(){
         return this.type;
+    }
+    setLocation(x){
+        this.location = x;
     }
     recruit(){
         return this.recruitSuccess;

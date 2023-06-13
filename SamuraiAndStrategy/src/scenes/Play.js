@@ -127,6 +127,11 @@ class Play extends Phaser.Scene {
 
         //Bandits (right)
         this.add.text(game.config.width * (7 / 8), game.config.height / 40, 'Bandits:', titleConfig);
+        this.anims.create({
+            key: 'killBandits',
+            frames: this.anims.generateFrameNames('banditTrack', {prefix: 'B', start:1, end: 32}),
+            frameRate: 1
+        });
 
         //Time (top left)
         this.add.text(game.config.width * (1 / 40), game.config.height / 40, 'Time: ', titleConfig);
@@ -156,8 +161,6 @@ class Play extends Phaser.Scene {
         this.mercenary = this.add.text(game.config.width * (2 / 40), game.config.height * (28 / 40), 'Mercenaries: ' + (this.merc), this.textConfig);
         this.buildingSuppliesT = this.add.text(game.config.width * (1 / 40), game.config.height * (30 / 40), 'Building Materials: ' + (this.buildingSupplies), this.textConfig);
         this.riceLeft = this.add.text(game.config.width * (1 / 40), game.config.height * (32 / 40), 'Rice: ' + (this.rice) + "%", this.textConfig);
-        this.deadVilList = this.add.text(game.config.width * (1 / 40), game.config.height * (34 / 40), 'Dead Villagers: ' + (this.deadVillagers) , this.textConfig);
-        this.deadWarList = this.add.text(game.config.width * (1 / 40), game.config.height * (36 / 40), 'Dead Warriors: ' + (this.deadWarriors) , this.textConfig);
     
         //action buttons (bottom middle)
         this.action1 = new Buttont(this, game.config.width * (2 / 8) -15, game.config.height*(31/40) , "o Recruit samurai.", "x Recruit the first samurai who agrees to help.", this.textConfig, this.lonelyConfig);
@@ -174,6 +177,7 @@ class Play extends Phaser.Scene {
         this.action4.on('pointerdown', () => this.action4Handler(this.seasonInd, this.week));
         this.action5.on('pointerdown', () => this.action5Handler(this.seasonInd, this.week));
         this.action6.on('pointerdown', () => this.action6Handler(this.seasonInd, this.week));
+        this.action6.disableInteractive();
     }
     
     startRecruitment(){//first action
@@ -268,6 +272,10 @@ class Play extends Phaser.Scene {
             if(this.warriors >= this.maxWarriors){
                 this.action3.setText("You cannot recruit any more warriors.");
                 this.action3.disableInteractive();
+                this.action6.setInteractive();
+                this.action6.setText("o Return to village");
+                this.action6.txt="o Return to village";
+                this.action6.txt2="x Return to the village (time passes...)"
             }
         }
         if((this.seasonInd==1 && this.week > 1) || (this.seasonInd==2) || (this.seasonInd == 3 && this.week == 1)){
@@ -336,6 +344,17 @@ class Play extends Phaser.Scene {
             this.action5.setInteractive();
             this.action6.setInteractive();
         }
+        if(this.seasonInd == 2){
+            if(this.week==1){
+                this.track = this.add.sprite(game.config.width/2, game.config.y/2, 'banditTrack').setOrigin(0, 0);
+                this.track.anims.play('killBandits');
+                this.track.anims.pause(this.track.anims.currentAnim.frames[0]);
+            }else{
+                this.temp = Math.floor(this.northDef/50) + Math.floor(this.southDef/50) + Math.floor(this.eastDef/50) + Math.floor(this.westDef/50);
+                this.killBandits(this.track, this.temp);
+            }
+            
+        }
     }
 
     
@@ -344,7 +363,15 @@ class Play extends Phaser.Scene {
         this.week = 1;
         this.sound.play('transition');
         if(this.seasonInd == 1){
-            this.summerSetup();
+            this.winterSetup();
+        }
+        if(this.seasonInd ==2){
+            this.report1.setText("The bandits have begun to attack.");
+            this.report2.setText("For now, your defenses are holding them off.");
+            this.report3.setText("If any survive at the start of winter, there will be a final attack.");
+        }
+        if(this.seasonInd == 3){
+            this.winterSetup();
         }
     }
     
@@ -361,7 +388,7 @@ class Play extends Phaser.Scene {
     summerSetup(){ //sets up the needed text and buttons for summer and fall
         this.report1.setText("You have brought the samurai back to your village.");
         this.report2.setText("You must decide who should work on defenses and who should train.");
-        this.report3.setText("The bandits will arrive at the end of Fall, when they know the harvest is complete.");
+        this.report3.setText("The bandits will start attacking in Fall, when the harvest is complete.");
 
         this.action1.disableInteractive();
         this.action1.setText("Assign " + this.warriorlist[this.warriorIndex].getType());
@@ -430,7 +457,7 @@ class Play extends Phaser.Scene {
 
         this.actionA.on('pointerdown', () => this.actionAHandler(this.seasonInd, this.week));
 
-        this.actionB.on('pointerdown', () => this.nextWeek());
+        this.actionB.on('pointerdown', () => this.actionBHandler(this.seasonInd, this.week));
 
     }
     updateDefAndRes(){ //updates the defense and resource menus
@@ -522,6 +549,22 @@ class Play extends Phaser.Scene {
             if(task == 'train'){
                 this.samTaskMults[2]+=sam.getTrainR();
                 this.samTaskMults[3]*=sam.getStudentBonus();
+            }else{
+                if(task == 'n'){
+                    sam.setLocation(1);
+                }else{
+                    if(task == 'e'){
+                        sam.setLocation(2);
+                    }else{
+                        if(task == 's'){
+                            sam.setLocation(3);
+                        }else{
+                            if(task == 'w'){
+                                sam.setLocation(4);
+                            }
+                        }
+                    }
+                }
             }
         }
         if(this.warriorIndex<(this.warriors-1)){
@@ -551,7 +594,65 @@ class Play extends Phaser.Scene {
             }
         }
     }
-    
+    finalAttack(){
+        this.scene.start("menuScene"); // placeholder for end
+    }
+    winterSetup(){
+        this.countdown = this.time.delayedCall(20000, () => {
+            this.finalAttack();
+        }, null, this);
+
+        this.report1.setText("The bandits are attacking!");
+        this.report2.setText("Quick! Assign everyone to one of the defense points!");
+        this.report3.setText("Time remaining:");
+        this.timeBar = this.add.rectangle(game.config.width * (3 / 8) - 80, 32+game.config.height * (2/40), 200, 12, '#1e1e1e', 0.75).setOrigin(0,0);
+        this.tweens.add({
+            targets: this.timeBar,
+            duration: 20000,
+            scaleX: 0
+        });
+        this.label7.setText('North: 0/75');
+        this.label8.setText('East: 0/75');
+        this.label9.setText('South: 0/75');
+        this.labelA.setText('West: 0/75');
+
+        this.action8C.disableInteractive();
+        this.action8C.setText('o');
+
+        this.action9C.disableInteractive();
+        this.action9C.setText('o');
+
+        this.actionA.setText(" + ");
+        this.actionA.txt = " + ";
+        this.actionA.txt2 = "(+)";
+        this.actionAB.setText(" - ");
+        this.actionAB.txt = " - ";
+        this.actionAB.txt2 = "(-)";
+        
+        this.action2.setInteractive();
+        this.action2.setText("o North");
+        this.action2.txt = "o North";
+        this.action2.txt2 = "x North";
+        
+        this.action3.setInteractive();
+        this.action3.setText("o East");
+        this.action3.txt = "o East";
+        this.action3.txt2 = "x East";
+
+        this.action4.setInteractive();
+        this.action4.setText("o South");
+        this.action4.txt = "o South";
+        this.action4.txt2 = "x South";
+
+        this.action5.setInteractive();
+        this.action5.setText("o West");
+        this.action5.txt = "o West";
+        this.action5.txt2 = "x West";
+    }
+    killBandits(trgt, totKilled){
+            trgt.anims.resume();
+            trgt.anims.pause(trgt.anims.currentAnim.frames[(totKilled-1)]);
+    }
     //Below this are the functions that determine what each button does. I started structuring it like this when there were fewer buttons, but it was working well and I wanted to keep things consistent, so I decided to stick with it.
     action1Handler(a, b){
         switch(a){
@@ -762,6 +863,29 @@ class Play extends Phaser.Scene {
     action6Handler(a, b){
         switch(a){
             case 0:
+                switch(b){
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                        if(this.warriors == 7){
+                            while(this.week<12){
+                                this.nextWeek();
+                            }
+                            this.nextWeek();
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 1:
             case 2:
@@ -898,6 +1022,40 @@ class Play extends Phaser.Scene {
                             this.trainNum(0);
                             this.gatherNum(0);
                             this.buildNum(0);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 3:
+            default:
+                break;
+        }
+    }
+    actionBHandler(a, b){
+        switch(a){
+            case 0:
+                break;
+            case 1:
+            case 2:
+                switch(b){
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                        if(this.villagersAvailable(5)||this.samuraiAssignable==true){
+                            this.actionB.setText("Finish assigning!");
+                        }else{
+                            this.nextWeek();
                         }
                         break;
                     default:

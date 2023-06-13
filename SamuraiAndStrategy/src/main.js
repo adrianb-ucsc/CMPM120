@@ -1,7 +1,10 @@
 /*
 Adrian Bruce
 Samurai & Strategy v0.21
-Approx. 26 hours so far(including time spent making assets)
+Approx. 36 hours so far(including time spent making assets)
+
+Major phaser components used: Text objects(for almost everything), Phaser Input Events(for interactable buttons) and objects (for custom cursor), Timer (for Winter countdown), animations manager/animations (for the bandit track), tweens (for winter countdown bar)
+
 */
 let config = {
     type: Phaser.CANVAS,
