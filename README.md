@@ -5,3 +5,5 @@
 [Rocket Patrol Mod - Garden Patrol](https://asbruce.github.io/CMPM120/RocketPatrolMod/)
 
 [Endless Runner - Bat-venture](https://asbruce.github.io/CMPM120/EndlessRunner/)
+
+[Samurai and Strategy](https://asbruce.github.io/CMPM120/SamuraiAndStrategy/)
