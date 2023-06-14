@@ -639,9 +639,9 @@ class Play extends Phaser.Scene {
             this.scene.start("victoryScene");
         }else{
             if(((this.northDef+this.vilStrCalc(0))<this.temp)&&((this.eastDef+this.vilStrCalc(1))<this.temp)&&((this.southDef+this.vilStrCalc(2))<this.temp)&&((this.westDef+this.vilStrCalc(3))<this.temp)){
-                this.scene.start("lossScene");
+                this.scene.start("defeatScene");
             }else{
-                this.scene.start("mixedScene");
+                this.scene.start("survivedScene");
             }
         }
     }
@@ -676,6 +676,8 @@ class Play extends Phaser.Scene {
         this.actionAB.setText(" - ");
         this.actionAB.txt = " - ";
         this.actionAB.txt2 = "(-)";
+        this.actionB.disableInteractive();
+        this.actionB.setText(" ");
         
         this.action2.setInteractive();
         this.action2.setText("o North");

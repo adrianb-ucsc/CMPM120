@@ -13,11 +13,15 @@ class Menu extends Phaser.Scene{
     }
     create() {
         this.add.sprite(game.config.width/2, game.config.height/2, 'menuBg').setOrigin(0.5, 0.5);
-        this.clickCred = new Buttons(this, game.config.width*(12/16), game.config.height*(6/16), 'credButton', 0, {}, {}).setOrigin(0, 1);
+        this.clickCred = new Buttons(this, game.config.width*(12/16), game.config.height*(6/16), 'credButton', 0, credEffect).setOrigin(0, 1);
         function playEffect(x){
             x.sound.play('transition');
             x.scene.start('playScene');
             
+        }
+        function credEffect(x){
+            x.sound.play('transition');
+            x.scene.start('creditsScene');
         }
         this.clickPlay = new Buttons(this, game.config.width*(12/16), game.config.height*(3/16), 'playButton', 0, playEffect).setOrigin(0, 1);
     
