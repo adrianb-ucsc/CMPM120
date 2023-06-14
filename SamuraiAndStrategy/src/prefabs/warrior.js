@@ -27,8 +27,7 @@ class Warrior{
                 break;
         }
         this.typeNum = typeNum;
-        this.str = 15;
-        this.def = 5;
+        this.str = 1.25;
         this.plan = 0.25;
         this.trainR = 0.25;
         this.cost = 10;
@@ -40,8 +39,7 @@ class Warrior{
             this.plan = 1;
         }
         if(this.type=="Samurai(Swordsman)"){
-            this.str *= 1.5;
-            this.def *= 1.5;
+            this.str = 2;
         }
         if(this.type=="Samurai(Teacher)"){
             this.trainR = 1;
@@ -52,8 +50,7 @@ class Warrior{
             this.trainR = 0.2;
         }
         if(this.type=="Mercenary"){
-            this.str -= 1;
-            this.def -= 1;
+            this.str = 1;
             this.cost /= 2;
         }
         if(this.type=="Thief"){
@@ -64,7 +61,7 @@ class Warrior{
         return this.typeNum;
     }
     attack(){
-        return this.str;
+        return this.str*this.studentBonus;
     }
     test(){
         if(this.type!="Mercenary"){
@@ -77,9 +74,6 @@ class Warrior{
     }
     getTrainR(){
         return this.trainR;
-    }
-    getDefense(){
-        return this.def;
     }
     getCost(){
         return this.cost;
@@ -124,8 +118,7 @@ class Warrior{
                 break;
         }
         this.typeNum = x;
-        this.str = 5;
-        this.def = 5;
+        this.str = 1.25;
         this.plan = 0.25;
         this.trainR = 0.25;
         this.cost = 10;
@@ -136,8 +129,7 @@ class Warrior{
             this.plan = 1;
         }
         if(this.type=="Samurai(Swordsman)"){
-            this.str *= 1.5;
-            this.def *= 1.5;
+            this.str = 2;
         }
         if(this.type=="Samurai(Teacher)"){
             this.trainR = 1;
@@ -149,7 +141,6 @@ class Warrior{
         }
         if(this.type=="Mercenary"){
             this.str -= 1;
-            this.def -= 1;
             this.cost /= 2;
         }
         if(this.type=="Thief"){

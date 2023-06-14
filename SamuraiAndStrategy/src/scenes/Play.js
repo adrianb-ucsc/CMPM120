@@ -111,8 +111,8 @@ class Play extends Phaser.Scene {
         this.locList = ['North', 'East', 'South', 'West'];
         this.vilsGathering = 0;
         this.advancedTrain = false;
-        this.samTaskMults = [0, 1, 0, 1];
-
+        this.samTaskMults = [0, 1, 0, 1, 1, 1, 1, 1];
+        this.vilsDefending = [0, 0, 0, 0];
 
         //adding background and text
         this.add.sprite(game.config.width / 2, game.config.height / 2, 'map').setOrigin(0.5, 0.5);
@@ -130,7 +130,7 @@ class Play extends Phaser.Scene {
         this.anims.create({
             key: 'killBandits',
             frames: this.anims.generateFrameNames('banditTrack', {prefix: 'B', start:1, end: 32}),
-            frameRate: 1
+            frameRate: 6
         });
 
         //Time (top left)
@@ -315,18 +315,21 @@ class Play extends Phaser.Scene {
             }
             if(!this.advancedTrain){
                 this.temp = Phaser.Math.FloatBetween(0.1, 0.5);
-                if(Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3])<=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers)){
-                    this.t1Villagers += Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
+                this.temp = this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3];
+                if(Math.ceil(this.temp)<=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers)){
+                    this.t1Villagers += Math.ceil(this.temp);
                 }else{
                     this.t1Villagers+=(this.totVillagers-this.deadVillagers-this.t1Villagers-this.t2Villagers);
                 }
             }else{
                 this.temp = Phaser.Math.FloatBetween(0.01, 0.25);
-                if(Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3])<=(this.t1Villagers)){
-                    this.t1Villagers -= Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
-                    this.t2Villagers += Math.ceil(this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3]);
+                this.temp = this.temp * this.vilsTraining*this.samTaskMults[2]*this.samTaskMults[3];
+                if(Math.ceil(this.temp)<=(this.t1Villagers)){
+                    this.t1Villagers -= Math.ceil(this.temp);
+                    this.t2Villagers += Math.ceil(this.temp);
                 }else{
                     this.t2Villagers+=(this.t1Villagers);
+                    this.t1Villagers-=this.t1Villagers;
                 }
             }
             this.updateDefAndRes();
@@ -347,8 +350,9 @@ class Play extends Phaser.Scene {
         if(this.seasonInd == 2){
             if(this.week==1){
                 this.track = this.add.sprite(game.config.width/2, game.config.y/2, 'banditTrack').setOrigin(0, 0);
-                this.track.anims.play('killBandits');
-                this.track.anims.pause(this.track.anims.currentAnim.frames[0]);
+                this.deadBandits=1;
+                this.temp = Math.floor(this.northDef/50) + Math.floor(this.southDef/50) + Math.floor(this.eastDef/50) + Math.floor(this.westDef/50);
+                this.killBandits(this.track, this.temp);
             }else{
                 this.temp = Math.floor(this.northDef/50) + Math.floor(this.southDef/50) + Math.floor(this.eastDef/50) + Math.floor(this.westDef/50);
                 this.killBandits(this.track, this.temp);
@@ -427,7 +431,8 @@ class Play extends Phaser.Scene {
         
         this.action7 = new Buttont(this, game.config.width * (10.5/16), game.config.height*(31/40) , " + ", "(+)", this.textConfig, this.lonelyConfig);
         this.action7B = new Buttont(this, game.config.width * (11.5/16), game.config.height*(31/40) , " - ", "(-)", this.textConfig, this.lonelyConfig);
-        this.action7C = new Buttont(this, game.config.width * (12.5/16), game.config.height*(31/40) , "o", "o", this.textConfig, this.lonelyConfig);
+        this.action7C = new Buttont(this, game.config.width * (12.5/16), game.config.height*(31/40) , " ", " ", this.textConfig, this.lonelyConfig);
+        this.action7C.disableInteractive();
 
         this.action8 = new Buttont(this, game.config.width * (10.5/16), game.config.height*(32.25/40) , " + ", "(+)", this.textConfig, this.lonelyConfig);
         this.action8B = new Buttont(this, game.config.width * (11.5/16), game.config.height*(32.25/40) , " - ", "(-)", this.textConfig, this.lonelyConfig);
@@ -439,7 +444,8 @@ class Play extends Phaser.Scene {
 
         this.actionA = new Buttont(this, game.config.width * (10.5/16), game.config.height*(34.75/40) , "Auto Assign", "(Auto Assign)", this.textConfig, this.lonelyConfig);
         this.actionAB = new Buttont(this, game.config.width * (11.5/16), game.config.height*(34.75/40) , "", "", this.textConfig, this.lonelyConfig);
-        this.actionAC = new Buttont(this, game.config.width * (12.5/16), game.config.height*(34.75/40) , "o", "o", this.textConfig, this.lonelyConfig);
+        this.actionAC = new Buttont(this, game.config.width * (12.5/16), game.config.height*(34.75/40) , " ", " ", this.textConfig, this.lonelyConfig);
+        this.actionAC.disableInteractive();
 
         this.actionB = new Buttont(this, game.config.width * (12/16), game.config.height*(37/40) , "Next Week", "Time passes...", this.textConfig, this.lonelyConfig);
 
@@ -455,7 +461,8 @@ class Play extends Phaser.Scene {
         this.action9C.on('pointerdown', () => this.action9Handler(this.seasonInd, this.week, 2));
 
 
-        this.actionA.on('pointerdown', () => this.actionAHandler(this.seasonInd, this.week));
+        this.actionA.on('pointerdown', () => this.actionAHandler(this.seasonInd, this.week, 0));
+        this.actionAB.on('pointerdown', () => this.actionAHandler(this.seasonInd, this.week, 1));
 
         this.actionB.on('pointerdown', () => this.actionBHandler(this.seasonInd, this.week));
 
@@ -476,12 +483,27 @@ class Play extends Phaser.Scene {
         this.label9.setText('Training: ' + this.vilsTraining + '/75');
         this.labelA.setText('Waiting: ' + (this.totVillagers-this.vilsBuilding-this.vilsGathering-this.vilsTraining) + '/75');
     }
+    updateLabelsWint(){//updates the labels for the winter actions
+        this.label7.setText('North: ' + this.vilsDefending[0] + '/75, STR  ' +this.vilStrCalc(0));
+        this.label8.setText('East: ' + this.vilsDefending[1]+ '/75, STR ' +this.vilStrCalc(1));
+        this.label9.setText('South: ' + this.vilsDefending[2] + '/75, STR ' +this.vilStrCalc(2));
+        this.labelA.setText('West: ' + this.vilsDefending[3] + '/75, STR ' +this.vilStrCalc(3));
+    }
     villagersAvailable(x){//checks to make sure there are enough villagers available for the desired action
-        if((this.totVillagers-this.vilsBuilding-this.vilsGathering-this.vilsTraining-this.deadVillagers)>=x){
-            return true;
+        if(this.seasonInd<3){
+            if((this.totVillagers-this.vilsBuilding-this.vilsGathering-this.vilsTraining-this.deadVillagers)>=x){
+                return true;
+            }else{
+                return false;
+            }  
         }else{
-            return false;
+            if((this.totVillagers-this.vilsDefending[0]-this.vilsDefending[1]-this.vilsDefending[2]-this.vilsDefending[3])>=x){
+                return true;
+            }else{
+                return false;
+            }
         }
+        
     }
     gatherNum(c){ //updates the number of villagers gathering materials
         if(c==0){
@@ -541,6 +563,18 @@ class Play extends Phaser.Scene {
         }
         this.updateLabelsSumFal();
     }
+    defendingNum(a, c){
+        if(c==0){
+            if(this.villagersAvailable(5)){
+                this.vilsDefending[a]+=5;
+            }
+        }else{
+            if(this.vilsGathering>=5){
+                this.vilsDefending[a] -=5;
+            }
+        }
+        this.updateLabelsWint();
+    }
     assign(sam, task){//assigns a samurai to a task
         if(task == 'build'){
             this.samTaskMults[0]+=sam.getPlan();
@@ -552,15 +586,19 @@ class Play extends Phaser.Scene {
             }else{
                 if(task == 'n'){
                     sam.setLocation(1);
+                    this.samTaskMults[4]*=sam.attack();
                 }else{
                     if(task == 'e'){
                         sam.setLocation(2);
+                        this.samTaskMults[5]*=sam.attack();
                     }else{
                         if(task == 's'){
                             sam.setLocation(3);
+                            this.samTaskMults[6]*=sam.attack();
                         }else{
                             if(task == 'w'){
                                 sam.setLocation(4);
+                                this.samTaskMults[7]*=sam.attack();
                             }
                         }
                     }
@@ -595,7 +633,17 @@ class Play extends Phaser.Scene {
         }
     }
     finalAttack(){
-        this.scene.start("menuScene"); // placeholder for end
+        this.sound.play('transition');
+        this.temp = 100*(this.totBandits-this.deadBandits);
+        if(((this.northDef+this.vilStrCalc(0))>=this.temp)&&((this.eastDef+this.vilStrCalc(1))>=this.temp)&&((this.southDef+this.vilStrCalc(2))>=this.temp)&&((this.westDef+this.vilStrCalc(3))>=this.temp)){
+            this.scene.start("victoryScene");
+        }else{
+            if(((this.northDef+this.vilStrCalc(0))<this.temp)&&((this.eastDef+this.vilStrCalc(1))<this.temp)&&((this.southDef+this.vilStrCalc(2))<this.temp)&&((this.westDef+this.vilStrCalc(3))<this.temp)){
+                this.scene.start("lossScene");
+            }else{
+                this.scene.start("mixedScene");
+            }
+        }
     }
     winterSetup(){
         this.countdown = this.time.delayedCall(20000, () => {
@@ -617,10 +665,10 @@ class Play extends Phaser.Scene {
         this.labelA.setText('West: 0/75');
 
         this.action8C.disableInteractive();
-        this.action8C.setText('o');
+        this.action8C.setText(' ');
 
         this.action9C.disableInteractive();
-        this.action9C.setText('o');
+        this.action9C.setText(' ');
 
         this.actionA.setText(" + ");
         this.actionA.txt = " + ";
@@ -650,8 +698,17 @@ class Play extends Phaser.Scene {
         this.action5.txt2 = "x West";
     }
     killBandits(trgt, totKilled){
-            trgt.anims.resume();
-            trgt.anims.pause(trgt.anims.currentAnim.frames[(totKilled-1)]);
+        if(totKilled>this.deadBandits){
+            trgt.anims.play({ key: 'killBandits', startFrame: this.deadBandits-1}, true);
+            trgt.anims.stopOnFrame(trgt.anims.currentAnim.frames[(totKilled-1)]);
+            this.deadBandits=totKilled;
+            if(this.deadBandits>=33){
+                this.scene.start("victoryScene");
+            }
+        }
+    }
+    vilStrCalc(x){
+        return Math.floor(this.samTaskMults[x+4] * this.vilsDefending[x]*(((this.totVillagers-this.t1Villagers-this.t2Villagers)+(this.t1Villagers*1.5)+(this.t2Villagers*2))/75));
     }
     //Below this are the functions that determine what each button does. I started structuring it like this when there were fewer buttons, but it was working well and I wanted to keep things consistent, so I decided to stick with it.
     action1Handler(a, b){
@@ -731,6 +788,8 @@ class Play extends Phaser.Scene {
                         break;
                 }
                 break;
+            case 3:
+                this.assign(this.warriorlist[this.warriorIndex], 'n');
             default:
                 break;
         }
@@ -777,6 +836,8 @@ class Play extends Phaser.Scene {
                         break;
                 }
                 break;
+            case 3:
+                this.assign(this.warriorlist[this.warriorIndex], 'e');
             default:
                 break;
         }
@@ -826,6 +887,7 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.assign(this.warriorlist[this.warriorIndex], 's');
             default:
                 break;
         }
@@ -856,6 +918,7 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.assign(this.warriorlist[this.warriorIndex], 'w');
             default:
                 break;
         }
@@ -937,6 +1000,7 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.defendingNum(0, c);
             default:
                 break;
         }
@@ -966,6 +1030,7 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.defendingNum(1, c);
             default:
                 break;
         }
@@ -995,11 +1060,12 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.defendingNum(2, c);
             default:
                 break;
         }
     }
-    actionAHandler(a, b){
+    actionAHandler(a, b, c){
         switch(a){
             case 0:
                 break;
@@ -1029,6 +1095,7 @@ class Play extends Phaser.Scene {
                 }
                 break;
             case 3:
+                this.defendingNum(3, c);
             default:
                 break;
         }
