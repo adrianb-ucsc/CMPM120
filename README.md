@@ -9,4 +9,4 @@
 [Samurai and Strategy](https://asbruce.github.io/CMPM120/SamuraiAndStrategy/)
 
 ### Personal Projects
-[ToDo Bees](https://asbruce.github.io/CMPM120/Todobees/)
+[ToDo Bees](https://asbruce.github.io/CMPM120/ToDoBees/)
