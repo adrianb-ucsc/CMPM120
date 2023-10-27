@@ -7,6 +7,3 @@
 [Endless Runner - Bat-venture](https://asbruce.github.io/CMPM120/EndlessRunner/)
 
 [Samurai and Strategy](https://asbruce.github.io/CMPM120/SamuraiAndStrategy/)
-
-### Personal Projects
-[ToDo Bees](https://asbruce.github.io/CMPM120/ToDoBees/)
